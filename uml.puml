@@ -1,0 +1,174 @@
+@startuml myUml
+set namespaceSeparator ::
+
+class "weather_app::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "weather_app::main.dart::MyApp"
+
+class "weather_app::models::forecasts.dart::Forecasts" {
+  -List<List<Weather>> _weathers
+  +List<List<Weather>> weathers
+}
+
+class "weather_app::models::weather.dart::Weather" {
+  -String _weatherDescription
+  -String _iconCode
+  -double _currentTemperature
+  -double _minTemperature
+  -double _maxTemperature
+  -int _humidityPercentage
+  -DateTime _lastUpdate
+  +String weatherDescription
+  +String iconCode
+  +double currentTemperature
+  +double minTemperature
+  +double maxTemperature
+  +int humidityPercentage
+  +DateTime lastUpdate
+}
+
+class "weather_app::providers::app_provider.dart::AppProvider" {
+  -WeatherService _weatherService
+  -bool _isTest
+  -SharedPreferences _prefs
+  -Completer<dynamic> _dataFetched
+  -Weather? _currentWeather
+  -Forecasts? _forecasts
+  {static} -String _lat
+  {static} -String _lon
+  +Completer<dynamic> dataFetched
+  +bool isTest
+  +Weather? currentWeather
+  +Forecasts? forecasts
+  +String lat
+  +String lon
+  +Function initializeApp
+  -Future<void> _initializeApp()
+  +Future<void> getAndSetCurrentWeather()
+  +Future<void> getAndSetForecasts()
+}
+
+"weather_app::providers::app_provider.dart::AppProvider" o-- "weather_app::providers::services::weather_service.dart::WeatherService"
+"weather_app::providers::app_provider.dart::AppProvider" o-- "shared_preferences::shared_preferences.dart::SharedPreferences"
+"weather_app::providers::app_provider.dart::AppProvider" o-- "dart::async::Completer<dynamic>"
+"weather_app::providers::app_provider.dart::AppProvider" o-- "weather_app::models::weather.dart::Weather"
+"weather_app::providers::app_provider.dart::AppProvider" o-- "weather_app::models::forecasts.dart::Forecasts"
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "weather_app::providers::app_provider.dart::AppProvider"
+
+class "weather_app::providers::services::weather_service.dart::WeatherService" {
+  {static} -String _apiKey
+  {static} -String _weatherAuthority
+  {static} -String _currentWeatherApi
+  {static} -String _forecastApi
+  +Future<dynamic> getCurrentWeather()
+  +Future<dynamic> getForecasts()
+}
+
+class "weather_app::screens::main_page.dart::MainPage" {
+  {static} +String route
+  +State<MainPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "weather_app::screens::main_page.dart::MainPage"
+
+class "weather_app::screens::main_page.dart::_MainPageState" {
+  +void initState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "weather_app::screens::main_page.dart::_MainPageState"
+
+class "weather_app::utils::api_manager.dart::APIManager" {
+  {static} -dynamic _decodeResponse()
+  {static} +Future<dynamic> postAPICall()
+  {static} +Future<dynamic> getAPICall()
+}
+
+class "weather_app::utils::exceptions.dart::CustomException" {
+  -String _prefix
+  -String _message
+  +String toString()
+}
+
+"dart::core::Exception" <|-- "weather_app::utils::exceptions.dart::CustomException"
+
+class "weather_app::utils::exceptions.dart::FetchDataException" {
+}
+
+"weather_app::utils::exceptions.dart::CustomException" <|-- "weather_app::utils::exceptions.dart::FetchDataException"
+
+class "weather_app::utils::exceptions.dart::BadRequestException" {
+}
+
+"weather_app::utils::exceptions.dart::CustomException" <|-- "weather_app::utils::exceptions.dart::BadRequestException"
+
+class "weather_app::utils::exceptions.dart::UnauthorisedException" {
+}
+
+"weather_app::utils::exceptions.dart::CustomException" <|-- "weather_app::utils::exceptions.dart::UnauthorisedException"
+
+class "weather_app::utils::exceptions.dart::InvalidInputException" {
+}
+
+"weather_app::utils::exceptions.dart::CustomException" <|-- "weather_app::utils::exceptions.dart::InvalidInputException"
+
+class "weather_app::widgets::current_weather.dart::CurrentWeather" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "weather_app::widgets::current_weather.dart::CurrentWeather"
+
+class "weather_app::widgets::five_days_forecasts.dart::FiveDaysForecasts" {
+  +ScrollController externalScrollController
+  +List<ScrollController> internalScrollControllers
+  +State<FiveDaysForecasts> createState()
+}
+
+"weather_app::widgets::five_days_forecasts.dart::FiveDaysForecasts" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "weather_app::widgets::five_days_forecasts.dart::FiveDaysForecasts"
+
+class "weather_app::widgets::five_days_forecasts.dart::_FiveDaysForecastsState" {
+  -dynamic _scrollListener()
+  +void initState()
+  +void dispose()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "weather_app::widgets::five_days_forecasts.dart::_FiveDaysForecastsState"
+
+class "weather_app::widgets::my_app_bar.dart::MyAppBar" {
+  -bool _isMainPage
+  {static} +String channel
+  {static} +MethodChannel platform
+  +Size preferredSize
+  -dynamic _openNativeActivity()
+  +Widget build()
+}
+
+"weather_app::widgets::my_app_bar.dart::MyAppBar" o-- "flutter::src::services::platform_channel.dart::MethodChannel"
+"weather_app::widgets::my_app_bar.dart::MyAppBar" o-- "dart::ui::Size"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "weather_app::widgets::my_app_bar.dart::MyAppBar"
+"flutter::src::widgets::preferred_size.dart::PreferredSizeWidget" <|-- "weather_app::widgets::my_app_bar.dart::MyAppBar"
+
+class "weather_app::widgets::one_day_forecasts.dart::OneDayForecasts" {
+  +ScrollController scrollController
+  +List<Weather> weathers
+  +State<OneDayForecasts> createState()
+}
+
+"weather_app::widgets::one_day_forecasts.dart::OneDayForecasts" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "weather_app::widgets::one_day_forecasts.dart::OneDayForecasts"
+
+class "weather_app::widgets::one_day_forecasts.dart::_OneDayForecastsState" {
+  -dynamic _scrollListener()
+  +void initState()
+  +void dispose()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "weather_app::widgets::one_day_forecasts.dart::_OneDayForecastsState"
+
+
+@enduml
