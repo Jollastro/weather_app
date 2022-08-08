@@ -1,5 +1,9 @@
 # Weather App
 
+### Author: Davide Balducci
+
+<br />
+
 ### The code is commented and pretty much self-explanatory
 
 <br />
