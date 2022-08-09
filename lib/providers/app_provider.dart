@@ -11,32 +11,24 @@ import '../models/weather.dart';
 class AppProvider with ChangeNotifier {
   //? service that handles api calls to weather.org
   late final WeatherService _weatherService;
+
+  //? property used to avoid local storaging in tests
   late final bool _isTest;
-  //? prefs utilised for local storaging, in order to retrieve old data if there is no internet connection
+
+  //? prefs utilised for local storaging, in order to retrieve old data
+  //? if there is no internet connection
   late final SharedPreferences _prefs;
 
+  //? completer utilised to notice when the data are all fetched
   final Completer _dataFetched = Completer();
 
-  Completer get dataFetched => _dataFetched;
-  bool get isTest => _isTest;
+  //? static variables with coordinates of London
+  static const _lat = "51.509865";
+  static const _lon = "-0.118092";
 
   //? variables that contain my data
   Weather? _currentWeather;
   Forecasts? _forecasts;
-
-  Weather? get currentWeather => _currentWeather;
-  Forecasts? get forecasts => _forecasts;
-
-  static const _lat = "51.509865";
-  static const _lon = "-0.118092";
-
-  String get lat => _lat;
-  String get lon => _lon;
-
-  AppProvider({required WeatherService weatherService, bool isTest = false}) {
-    _weatherService = weatherService;
-    _isTest = isTest;
-  }
 
   //? initializer function (it prepares prefs, fetches the data
   //? and then set the completer as completed)
@@ -50,7 +42,22 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  //? getters
+  bool get isTest => _isTest;
+  Completer get dataFetched => _dataFetched;
+
+  Weather? get currentWeather => _currentWeather;
+  Forecasts? get forecasts => _forecasts;
+
+  String get lat => _lat;
+  String get lon => _lon;
+
   Function get initializeApp => _initializeApp;
+
+  AppProvider({required WeatherService weatherService, bool isTest = false}) {
+    _weatherService = weatherService;
+    _isTest = isTest;
+  }
 
   //? get current weather data and set it on the variable
   Future<void> getAndSetCurrentWeather(String lat, String lon) async {
